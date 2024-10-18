@@ -10,7 +10,6 @@ def tsp(M, K):
 	curr_steps_taken = 0 # count the steps taken from the starting city, must be less than k
 	current_city = 0 # set as starting city
 	optimal_tour = [current_city]
-	visited_cities = [current_city]
 	excluded_cities = [] # Tuples of (source_city, destination city)
 
 	# Main Random Greedy Algorithm
@@ -19,7 +18,7 @@ def tsp(M, K):
 		potential_cities = [] # Tuples of (city, cost)
 
 		# Check if all cities have been visited
-		if (len(visited_cities) == num_cities):
+		if (len(optimal_tour) == num_cities):
 			# See if we can return back to the original city
 			if (M[current_city, 0] > -1):
 				optimal_tour.append(0) # Add the starting city aat the end of the tour
@@ -38,7 +37,7 @@ def tsp(M, K):
 		# Find the next best city to visit
 		for city in range(num_cities):
 			# If there is a path between current city and the next, and we haven't vistited or excluded the next city
-			if (M[current_city, city] > -1) and (city not in visited_cities) and ((current_city, city) not in excluded_cities):
+			if (M[current_city, city] > -1) and (city not in optimal_tour) and ((current_city, city) not in excluded_cities):
 				potential_cities.append((city, M[current_city, city])) # City is avalible to go to
 
 		# If there are available cities, choose the one with the least cost
@@ -50,25 +49,32 @@ def tsp(M, K):
 					min_cost_city = (city, cost)
 			
 			# Visit that city
-			visited_cities.append(min_cost_city[0])
 			current_city = min_cost_city[0]
 			optimal_tour.append(min_cost_city[0])
 			curr_steps_taken += 1
 		else:
-			break
-
-	return optimal_tour, optimal_value
-
-def main():
-	# Expect 0,1,3,2,0 with cost 7 (no backtracking necessary)
-	M41 = np.array(
-	[[-1, 1, 2, 5],
-	[1, -1, 2, 1],
-	[2, 2, -1, 3],
-	[5, 1, 3, -1]])
-
-	output = tsp(M41, 50)
-	print(output)
-
-main()
+			# Backtrack to a random city in the visited cities
+			# Select random city thats not the one we are on from our visited
+			if (len(optimal_tour) > 1):
+				random_city = -1
+				while (random_city != current_city):
+					# Select random city thats not the current one
+					random_city = random.choice(optimal_tour)
+					excluded_cities.append((random_city, current_city))
+					current_city = random_city
+					
+					# Cut off the tour back to the random city chosen
+					# Find the index of the random city in the tour
+					idx = -1
+					for i in range(len(optimal_tour)):
+						if (optimal_tour[i] == random_city):
+							idx = i
+					optimal_tour = optimal_tour[:idx]
+			else:
+				break # Nowhere to backtrack to, 
+	if (len(optimal_tour) > 1):
+		return optimal_tour, optimal_value
+	else:
+		print("No tours for this matrix")
+		return [], None
 
