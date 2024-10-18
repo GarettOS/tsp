@@ -6,12 +6,39 @@ def tsp(M, K):
 
 	### Starting Variables ### 
 
-	optimal_tour = [] # initialize list where the minimal tour will be stored
-	optimal_value = np.inf # stores cost of best tour found
+	optimal_tour = []
+	optimal_value = float('inf') # stores cost of best tour found
 	num_cities = M.shape[0] 
 	curr_steps_taken = 0 # count the steps taken from the starting city, must be less than k
-	current_city = 0 # represents starting city 1
+	current_city = 0 # set as starting city
+	visited_cities = [current_city]
+	excluded_cities = [] # Tuples of (source_city, destination city)
+	potential_cities = [] # Tuples of (city, cost)
 
-	# Main Random Greedy Algorithm
+	### Main Random Greedy Algorithm ###
+
+	# Find all the next available cities to visit
+	for city in range(num_cities):
+		# If there is a path between current city and the next, and we haven't vistited or excluded the next city
+		if (M[current_city, city] > 0) and (city not in visited_cities) and ((current_city, city) not in excluded_cities):
+			potential_cities.append((city, M[current_city, city])) # City is avalible to go to
+
+	print(potential_cities)
 	
+	# If there are available cities, choose the one with the least cost
+	#if potential_cities > 0:
+	#	min_cost_city = float('inf')
+	#	for city in range(len(potential_cities)):
+
+def main():
+	# Expect 0,1,3,2,0 with cost 7 (no backtracking necessary)
+	M41 = np.array(
+	[[-1, 1, 2, 5],
+	[1, -1, 2, 1],
+	[2, 2, -1, 3],
+	[5, 1, 3, -1]])
+
+	output = tsp(M41, 50)
+
+main()
 
