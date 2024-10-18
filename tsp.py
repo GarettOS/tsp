@@ -3,10 +3,8 @@ import numpy as np
 
 # Traveling Salesman problem using random greedy search. M = nxn Matrix, K = max # of steps
 def tsp(M, K):
-
 	# Starting Variables
 	optimal_value = float('inf') # stores cost of best tour found
-	optimal_tour = []
 	num_cities = M.shape[0] 
 	curr_steps_taken = 0 # count the steps taken from the starting city, must be less than k
 	current_city = 0 # set as starting city
@@ -33,9 +31,7 @@ def tsp(M, K):
 				if cost < optimal_value:
 					# If it is, update the best values
 					optimal_value = cost
-					optimal_tour = tour[:]
-
-				break # finished
+					break
 
 		# Find the next best city to visit
 		for city in range(num_cities):
@@ -59,7 +55,6 @@ def tsp(M, K):
 			# Backtrack to a random city in the visited cities
 			# Select random city thats not the one we are on from our visited
 			if (len(tour) > 1):
-
 				# Filter to look for cities besides the current city
 				available_cities = []
 				for city in tour:
@@ -75,16 +70,17 @@ def tsp(M, K):
 					if (tour[i] == random_city):
 						idx = i 
 
+				# Exclude the path both ways because bi-directional
 				excluded_cities.append((random_city, idx+1))
+				excluded_cities.append((idx+1, random_city))
 
 				# Cut off the tour back to the random city chosen
 				tour = tour[:idx+1]
 				current_city = random_city
 			else:
 				break # Nowhere to backtrack to, 
-	if (len(optimal_tour) > 1):
-		return optimal_tour, optimal_value
+	if (len(tour) > 1 and optimal_value < float('inf')):
+		return tour, optimal_value
 	else:
 		print("No tours for this matrix")
 		return [], None
-
