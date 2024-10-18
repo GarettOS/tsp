@@ -6,11 +6,11 @@ def tsp(M, K):
 
 	### Starting Variables ### 
 
-	optimal_tour = []
 	optimal_value = float('inf') # stores cost of best tour found
 	num_cities = M.shape[0] 
 	curr_steps_taken = 0 # count the steps taken from the starting city, must be less than k
 	current_city = 0 # set as starting city
+	tour = [current_city]
 	visited_cities = [current_city]
 	excluded_cities = [] # Tuples of (source_city, destination city)
 	potential_cities = [] # Tuples of (city, cost)
@@ -23,12 +23,25 @@ def tsp(M, K):
 		if (M[current_city, city] > 0) and (city not in visited_cities) and ((current_city, city) not in excluded_cities):
 			potential_cities.append((city, M[current_city, city])) # City is avalible to go to
 
-	print(potential_cities)
-	
 	# If there are available cities, choose the one with the least cost
-	#if potential_cities > 0:
-	#	min_cost_city = float('inf')
-	#	for city in range(len(potential_cities)):
+	if len(potential_cities) > 0:
+		# Find the least cost city
+		min_cost_city = (-1, float('inf'))
+		for city, cost in potential_cities:
+			if cost < min_cost_city[1]:
+				min_cost_city = (city, cost)
+		
+		# Visit that city
+		visited_cities.append(min_cost_city[0])
+		current_city = min_cost_city[0]
+		tour.append(min_cost_city[0])
+		curr_steps_taken += 1
+	
+	print(visited_cities)
+	print(current_city)
+	print(tour)
+	print(curr_steps_taken)
+
 
 def main():
 	# Expect 0,1,3,2,0 with cost 7 (no backtracking necessary)
